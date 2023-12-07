@@ -223,6 +223,30 @@ class FileController {
     }
   };
 
+  static getSingleFile = async (req, res) => {
+    const { directory, filename } = req.params;
+    if (directory && filename) {
+      try {
+        let file = null;
+        const searchQuery = { $text: { $search: `${filename}` } };
+        if (directory === "images") {
+          file = await ImageModel.findOne(searchQuery);
+        } else {
+          file = await FileModel.findOne(searchQuery);
+        }
+        if (file) {
+          res.send({ status: "success", file: file });
+        } else {
+          res.send({ status: "failed", message: "File not found" });
+        }
+      } catch (error) {
+        res.send({ status: "failed", message: error.message });
+      }
+    } else {
+      res.send({ status: "failed", message: "Invalid directory or filename" });
+    }
+  };
+
   // static downloadFile = async (req, res) => {
   //   const { file } = req.params;
   //   try {

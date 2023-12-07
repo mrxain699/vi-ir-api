@@ -26,6 +26,7 @@ web_router.get("/user", UserController.getUser);
 web_router.get("/files/:directory", FileController.getFiles);
 web_router.get("/totalfiles/:directory", FileController.getTotalFiles);
 web_router.get("/totaldirectories", FileController.getTotalDirectories);
+web_router.get("/file/:directory/:filename", FileController.getSingleFile);
 // web_router.get("/download/:file", FileController.downloadFile);
 // Delete Requests
 web_router.delete("/delete/:directory/:id", FileController.deleteFile);
