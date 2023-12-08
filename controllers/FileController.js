@@ -246,6 +246,10 @@ class FileController {
           const command = new GetObjectCommand(getObjectParams);
           const url = await getSignedUrl(FileController.s3, command);
           file.file_url = url;
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${file.file_org_name}"`
+          );
           res.redirect(file.file_url);
         } else {
           res.send({ status: "failed", message: "File not found" });
