@@ -29,10 +29,12 @@ class FileController {
     const randomFileName = (bytes = 32) =>
       crypto.randomBytes(bytes).toString("hex");
     const tempFileName = randomFileName();
+    const fileType = req.file.originalname.split(".").pop();
+    const upload_file_name = tempFileName + "." + fileType;
 
     const params = {
       Bucket: FileController.bucketName,
-      Key: tempFileName,
+      Key: upload_file_name,
       Body: req.file.buffer,
       ContentType: req.file.mimetype,
     };
@@ -51,7 +53,7 @@ class FileController {
         } else {
           save_file = new ImageModel({
             file_org_name: req.file.originalname,
-            file_temp_name: tempFileName,
+            file_temp_name: upload_file_name,
           });
         }
       } else {
@@ -63,7 +65,7 @@ class FileController {
         } else {
           save_file = await new FileModel({
             file_org_name: req.file.originalname,
-            file_temp_name: tempFileName,
+            file_temp_name: upload_file_name,
           });
         }
       }
