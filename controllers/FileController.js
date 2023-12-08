@@ -54,6 +54,7 @@ class FileController {
           save_file = new ImageModel({
             file_org_name: req.file.originalname,
             file_temp_name: upload_file_name,
+            file_type: req.file.mimetype,
           });
         }
       } else {
@@ -66,6 +67,7 @@ class FileController {
           save_file = await new FileModel({
             file_org_name: req.file.originalname,
             file_temp_name: upload_file_name,
+            file_type: req.file.mimetype,
           });
         }
       }
@@ -237,7 +239,31 @@ class FileController {
           file = await FileModel.findOne(searchQuery);
         }
         if (file) {
-          res.send({ status: "success", file: file });
+          const getObjectParams = {
+            Bucket: FileController.bucketName,
+            Key: file.file_temp_name,
+          };
+          const command = new GetObjectCommand(getObjectParams);
+          const url = await getSignedUrl(FileController.s3, command);
+          file.file_url = url;
+          // const dispositionHeader = `attachment; filename="${file.file_org_name}"`;
+          // res.setHeader("Content-Disposition", dispositionHeader);
+
+          // // Set Content-Type header explicitly
+          // res.setHeader("Content-Type", file.file_type);
+          // res.send(
+          //   `
+          //   <a href="${file.file_url}" download="${file.file_org_name}" id="downloadLink">
+          //     <img src="${file.file_url}" alt="Image" />
+          //   </a>
+          //   <script>
+          //     document.addEventListener("DOMContentLoaded", function() {
+          //       document.getElementById("downloadLink").click();
+          //     });
+          //   </script>
+          // `
+          // );
+          res.send(file.file_url);
         } else {
           res.send({ status: "failed", message: "File not found" });
         }

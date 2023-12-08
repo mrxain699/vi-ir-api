@@ -4,6 +4,7 @@ const FileSchema = mongoose.Schema({
   file_org_name: { type: String, required: true, trim: true, unique: true },
   file_temp_name: { type: String, required: true, trim: true, unique: true },
   file_url: { type: String, trim: true, default: "" },
+  file_type: { type: String, required: true, trim: true },
   created_at: {
     type: Date,
     required: true,
