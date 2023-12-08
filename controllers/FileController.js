@@ -246,24 +246,7 @@ class FileController {
           const command = new GetObjectCommand(getObjectParams);
           const url = await getSignedUrl(FileController.s3, command);
           file.file_url = url;
-          // const dispositionHeader = `attachment; filename="${file.file_org_name}"`;
-          // res.setHeader("Content-Disposition", dispositionHeader);
-
-          // // Set Content-Type header explicitly
-          // res.setHeader("Content-Type", file.file_type);
-          // res.send(
-          //   `
-          //   <a href="${file.file_url}" download="${file.file_org_name}" id="downloadLink">
-          //     <img src="${file.file_url}" alt="Image" />
-          //   </a>
-          //   <script>
-          //     document.addEventListener("DOMContentLoaded", function() {
-          //       document.getElementById("downloadLink").click();
-          //     });
-          //   </script>
-          // `
-          // );
-          res.send(file.file_url);
+          res.redirect(file.file_url);
         } else {
           res.send({ status: "failed", message: "File not found" });
         }
@@ -274,24 +257,5 @@ class FileController {
       res.send({ status: "failed", message: "Invalid directory or filename" });
     }
   };
-
-  // static downloadFile = async (req, res) => {
-  //   const { file } = req.params;
-  //   try {
-  //     const params = {
-  //       Bucket: FileController.bucketName,
-  //       Key: file,
-  //     };
-  //     const command = new GetObjectCommand(params);
-  //     const response = await FileController.s3.send(command);
-  //     if (response) {
-  //       res.send(response.Body);
-  //     } else {
-  //       res.send({ status: "failed", message: "Image not found" });
-  //     }
-  //   } catch (error) {
-  //     res.send({ status: "failed", message: error.message });
-  //   }
-  // };
 }
 export default FileController;
