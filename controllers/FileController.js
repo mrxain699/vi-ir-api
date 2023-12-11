@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import crypto from "crypto";
+import fs from "fs";
 import { ImageModel, FileModel } from "../models/FileUploadModel.js";
 import {
   S3Client,
@@ -246,11 +247,11 @@ class FileController {
           const command = new GetObjectCommand(getObjectParams);
           const url = await getSignedUrl(FileController.s3, command);
           file.file_url = url;
-          res.setHeader(
-            "Content-Disposition",
-            `attachment; filename="${file.file_org_name}"`
-          );
-          res.redirect(file.file_url);
+          // res.setHeader(
+          //   "Content-Disposition",
+          //   `attachment; filename="${file.file_org_name}"`
+          // );
+          res.send(file.file_url);
         } else {
           res.send({ status: "failed", message: "File not found" });
         }
