@@ -247,10 +247,6 @@ class FileController {
           const command = new GetObjectCommand(getObjectParams);
           const url = await getSignedUrl(FileController.s3, command);
           file.file_url = url;
-          // res.setHeader(
-          //   "Content-Disposition",
-          //   `attachment; filename="${file.file_org_name}"`
-          // );
           res.send(file.file_url);
         } else {
           res.send({ status: "failed", message: "File not found" });
@@ -260,6 +256,46 @@ class FileController {
       }
     } else {
       res.send({ status: "failed", message: "Invalid directory or filename" });
+    }
+  };
+
+  static getAllFiles = async (req, res) => {
+    const { directory } = req.params;
+    if (directory) {
+      try {
+        let files = null;
+        if (directory === "images") {
+          files = await ImageModel.find({});
+        } else {
+          files = await FileModel.find({});
+        }
+        if (files.length > 0) {
+          let updated_files = [];
+          for (let file of files) {
+            const getObjectParams = {
+              Bucket: FileController.bucketName,
+              Key: file.file_temp_name,
+            };
+            const command = new GetObjectCommand(getObjectParams);
+            const url = await getSignedUrl(FileController.s3, command);
+            file.file_url = url;
+            updated_files.push(file.file_url);
+          }
+          res.send({
+            status: "success",
+            files: updated_files,
+          });
+        } else {
+          res.send({
+            status: "failed",
+            message: "Files not found",
+          });
+        }
+      } catch (error) {
+        res.send({ status: "failed", message: error.message });
+      }
+    } else {
+      res.send({ status: "failed", message: "Invalid parameters" });
     }
   };
 }
