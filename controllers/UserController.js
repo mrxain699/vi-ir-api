@@ -48,7 +48,7 @@ class UserController {
                 id: user._id,
               },
               process.env.JWT_SECRET,
-              { expiresIn: "2m" }
+              { expiresIn: expiresIn }
             );
             res.send({
               status: "success",
