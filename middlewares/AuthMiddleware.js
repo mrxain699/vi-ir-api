@@ -6,6 +6,10 @@ const validate_auth_request = async (req, res, next) => {
   if (authorization && authorization.startsWith("Bearer")) {
     try {
       token = authorization.split(" ")[1];
+      const decodedToken = jwt.decode(token, { complete: true });
+      if (decodedToken && decodedToken.payload.exp * 1000 < Date.now()) {
+        return res.send({ status: "failed", message: "Token has expired" });
+      }
       const { id } = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await UserModel.findById(id).select("-password");
       next();

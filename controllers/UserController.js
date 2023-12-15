@@ -42,11 +42,13 @@ class UserController {
         if (user) {
           const isMatch = await bcrypt.compare(password, user.password);
           if (username === user.username && isMatch) {
+            const expiresIn = 7 * 24 * 60 * 60;
             const token = jwt.sign(
               {
                 id: user._id,
               },
-              process.env.JWT_SECRET
+              process.env.JWT_SECRET,
+              { expiresIn: "2m" }
             );
             res.send({
               status: "success",
