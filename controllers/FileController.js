@@ -35,7 +35,7 @@ class FileController {
 
     const params = {
       Bucket: FileController.bucketName,
-      Key: upload_file_name,
+      Key: req.file.originalname,
       Body: req.file.buffer,
       ContentType: req.file.mimetype,
     };
@@ -111,7 +111,7 @@ class FileController {
           for (let file of files) {
             const getObjectParams = {
               Bucket: FileController.bucketName,
-              Key: file.file_temp_name,
+              Key: file.file_org_name,
             };
             const command = new GetObjectCommand(getObjectParams);
             const url = await getSignedUrl(FileController.s3, command);
@@ -196,7 +196,7 @@ class FileController {
         if (file) {
           const params = {
             Bucket: FileController.bucketName,
-            Key: file.file_temp_name,
+            Key: file.file_org_name,
           };
           const command = new DeleteObjectCommand(params);
           const response = await FileController.s3.send(command);
@@ -242,7 +242,7 @@ class FileController {
         if (file) {
           const getObjectParams = {
             Bucket: FileController.bucketName,
-            Key: file.file_temp_name,
+            Key: file.file_org_name,
           };
           const command = new GetObjectCommand(getObjectParams);
           const url = await getSignedUrl(FileController.s3, command);
@@ -274,7 +274,7 @@ class FileController {
           for (let file of files) {
             const getObjectParams = {
               Bucket: FileController.bucketName,
-              Key: file.file_temp_name,
+              Key: file.file_org_name,
             };
             const command = new GetObjectCommand(getObjectParams);
             const url = await getSignedUrl(FileController.s3, command);
